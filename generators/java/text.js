@@ -240,10 +240,9 @@ Blockly.Java['text_trim'] = function(block) {
 };
 
 Blockly.Java['text_print'] = function(block) {
-  // Print statement.
-  var msg = Blockly.Java.valueToCode(block, 'TEXT',
-      Blockly.Java.ORDER_NONE) || '\'\'';
-  return 'print(' + msg + ')\n';
+  var argument0 = Blockly.Java.valueToCode(block, 'TEXT',
+      Blockly.Java.ORDER_NONE) || '""';
+  return 'System.out.println(' + argument0 + '.toString());\n';
 };
 
 Blockly.Java['text_prompt_ext'] = function(block) {

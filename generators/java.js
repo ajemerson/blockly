@@ -17,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Minor change
 /**
  * @fileoverview Helper functions for generating Java for blocks.
  * @author fraser@google.com (Neil Fraser)
