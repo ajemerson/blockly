@@ -613,3 +613,36 @@ Blockly.Variables.getAddedVariables = function(workspace, originalVariables) {
   }
   return addedVariables;
 };
+
+/**
+ * Find a context for a variable.  If it is inside a procedure, we want to have
+ * The name of the containing procedure.  If this is a global variable then
+ * we want to return a null
+ * @param {!Blockly.Block} block Block to get context for
+ * @param {string} name string of the name to look for.
+ * @return {string} Context of the procedure (string) or null)
+*/
+Blockly.Variables.getLocalContext = function(block,name) {
+  do {
+    if (block.getProcedureDef) {
+      var tuple = block.getProcedureDef.call(block);
+      var params = tuple[1];
+      if (name === null) {
+        return tuple[0]+'.';
+      }
+      for(var i = 0; i < params.length; i++) {
+        if (params[i]['name'] === name) {
+          return tuple[0]+'.';
+        }
+      }
+      break;
+    } else if (block.type === 'initialize_variable' &&
+        block.getFieldValue('VAR') === name ) {
+      // We found an initialize_variable block, so now we want to go through
+      // and continue until we find the containing procedure (if any)
+      name = null;
+    }
+    block = block.getParent();
+  } while (block);
+  return null;
+};

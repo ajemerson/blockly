@@ -34,18 +34,14 @@ Blockly.Java.addReservedWords('math,random,Number');
 
 Blockly.Java['math_number'] = function(block) {
   // Numeric value.
-  var code = parseFloat(block.getFieldValue('NUM'));
-  var order;
-  if (code == Infinity) {
-    code = 'float("inf")';
-    order = Blockly.Java.ORDER_FUNCTION_CALL;
-  } else if (code == -Infinity) {
-    code = '-float("inf")';
-    order = Blockly.Java.ORDER_UNARY_SIGN;
-  } else {
-    order = code < 0 ? Blockly.Java.ORDER_UNARY_SIGN :
-            Blockly.Java.ORDER_ATOMIC;
+  var code = ''+parseFloat(block.getFieldValue('NUM'));
+  if (Blockly.Java.getTargetType() === 'Double') {
+    if (code.indexOf('.') < 0) {
+      code += '.0';
+    }
   }
+  var order = code < 0 ? Blockly.Java.ORDER_UNARY_SIGN :
+              Blockly.Java.ORDER_ATOMIC;
   return [code, order];
 };
 
@@ -63,7 +59,13 @@ Blockly.Java['math_arithmetic'] = function(block) {
   var order = tuple[1];
   var argument0 = Blockly.Java.valueToCode(block, 'A', order) || '0';
   var argument1 = Blockly.Java.valueToCode(block, 'B', order) || '0';
-  var code = argument0 + operator + argument1;
+  var code = '';
+  if (operator === ' ** ') {
+    Blockly.Java.addImport('java.lang.Math');
+    code = 'Math.pow(' + argument0 + ', ' + argument1 + ')';
+  } else {
+    code = argument0 + operator + argument1;
+  }
   return [code, order];
   // In case of 'DIVIDE', division between integers returns different results
   // in Java 2 and 3. However, is not an issue since Blockly does not
@@ -155,17 +157,17 @@ Blockly.Java['math_single'] = function(block) {
 Blockly.Java['math_constant'] = function(block) {
   // Constants: PI, E, the Golden Ratio, sqrt(2), 1/sqrt(2), INFINITY.
   var CONSTANTS = {
-    'PI': ['math.pi', Blockly.Java.ORDER_MEMBER],
-    'E': ['math.e', Blockly.Java.ORDER_MEMBER],
-    'GOLDEN_RATIO': ['(1 + math.sqrt(5)) / 2',
+    'PI': ['Math.PI', Blockly.Java.ORDER_MEMBER],
+    'E': ['Math.E', Blockly.Java.ORDER_MEMBER],
+    'GOLDEN_RATIO': ['(1 + Math.sqrt(5)) / 2',
                      Blockly.Java.ORDER_MULTIPLICATIVE],
-    'SQRT2': ['math.sqrt(2)', Blockly.Java.ORDER_MEMBER],
-    'SQRT1_2': ['math.sqrt(1.0 / 2)', Blockly.Java.ORDER_MEMBER],
-    'INFINITY': ['float(\'inf\')', Blockly.Java.ORDER_ATOMIC]
+    'SQRT2': ['Math.sqrt(2)', Blockly.Java.ORDER_MEMBER],
+    'SQRT1_2': ['Math.sqrt(1.0 / 2)', Blockly.Java.ORDER_MEMBER],
+    'INFINITY': ['Double.POSITIVE_INFINITY', Blockly.Java.ORDER_ATOMIC]
   };
   var constant = block.getFieldValue('CONSTANT');
   if (constant != 'INFINITY') {
-    Blockly.Java.definitions_['import_math'] = 'import math';
+    Blockly.Java.addImport('java.lang.Math');
   }
   return CONSTANTS[constant];
 };
@@ -236,14 +238,11 @@ Blockly.Java['math_number_property'] = function(block) {
 
 Blockly.Java['math_change'] = function(block) {
   // Add to a variable in place.
-  Blockly.Java.definitions_['from_numbers_import_Number'] =
-      'from numbers import Number';
   var argument0 = Blockly.Java.valueToCode(block, 'DELTA',
       Blockly.Java.ORDER_ADDITIVE) || '0';
   var varName = Blockly.Java.variableDB_.getName(block.getFieldValue('VAR'),
       Blockly.Variables.NAME_TYPE);
-  return varName + ' = (' + varName + ' if isinstance(' + varName +
-      ', Number) else 0) + ' + argument0 + '\n';
+  return varName + ' = ' + varName + ' + ' + argument0 + ';\n';
 };
 
 // Rounding functions have a single operand.

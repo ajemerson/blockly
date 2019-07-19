@@ -30,17 +30,65 @@ goog.require('Blockly.Java');
 
 
 Blockly.Java['variables_get'] = function(block) {
+  // Remember if this is a global variable to be initialized
+  //Blockly.Java.setGlobalVar(block,block.getFieldValue('VAR'), null);
   // Variable getter.
   var code = Blockly.Java.variableDB_.getName(block.getFieldValue('VAR'),
       Blockly.Variables.NAME_TYPE);
+  // if(Blockly.Java.GetVariableType(this.procedurePrefix_+
+  //     block.getFieldValue('VAR')) === 'Var') {
+  //   code += '.cloneObject()';
+  // }
   return [code, Blockly.Java.ORDER_ATOMIC];
 };
 
 Blockly.Java['variables_set'] = function(block) {
+  // Remember if this is a global variable to be initialized
+  // Blockly.Java.setGlobalVar(block,block.getFieldValue('VAR'), null);
   // Variable setter.
   var argument0 = Blockly.Java.valueToCode(block, 'VALUE',
       Blockly.Java.ORDER_NONE) || '0';
   var varName = Blockly.Java.variableDB_.getName(block.getFieldValue('VAR'),
       Blockly.Variables.NAME_TYPE);
-  return varName + ' = ' + argument0 + '\n';
+  // See if we have to handle the case where the type of the variable doesn't
+  // match the type of what is being assigned.
+  var sourceType = Blockly.Java.getValueType(block, 'VALUE');
+  // var destType = Blockly.Java.GetBlocklyType(block.getFieldValue('VAR'));
+  var destType = Blockly.Java.typeMapping[sourceType];  // Using this to select the Java type.
+  var compatible = false;
+
+  if (sourceType && goog.array.contains(sourceType, destType)) {
+      compatible = true;
+  }
+  if (destType === 'String' && !compatible) {
+    argument0 = Blockly.Java.toStringCode(block, 'VALUE');
+  }
+  var code = destType + " " + varName;
+  // if(Blockly.Java.GetVariableType(this.procedurePrefix_+
+  //     block.getFieldValue('VAR')) === 'Var') {
+  //   code += '.setObject(' + argument0 + ');\n';
+  // } else {
+    code += ' = ' + argument0 + ';\n';
+  // }
+  return code;
+};
+
+Blockly.Java['initialize_variable'] = function (block) {
+  var argument0 = Blockly.Java.valueToCode(block, 'VALUE',
+      Blockly.Java.ORDER_NONE) || '0';
+  if(block.procedurePrefix_ != '') {
+    // Variable setter.
+    var vartype = Blockly.Java.GetVariableType(block.procedurePrefix_+
+        block.getFieldValue('VAR'));
+    if ('LinkedList' === vartype) {
+        Blockly.Java.addImport('java.util.LinkedList');
+    }
+    var varName = Blockly.Java.variableDB_.getName(block.getFieldValue('VAR'),
+        Blockly.Variables.NAME_TYPE);
+    return vartype + ' ' + varName + ' = ' + argument0 + ';\n';
+  } else {
+    // Remember if this is a global variable to be initialized
+    Blockly.Java.setGlobalVar(block,block.getFieldValue('VAR'), argument0);
+    return '';
+  }
 };
