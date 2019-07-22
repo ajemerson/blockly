@@ -242,7 +242,7 @@ Blockly.Java['text_trim'] = function(block) {
 Blockly.Java['text_print'] = function(block) {
   var argument0 = Blockly.Java.valueToCode(block, 'TEXT',
       Blockly.Java.ORDER_NONE) || '""';
-  return 'System.out.println(' + argument0 + ';\n';// + '.toString());\n';
+  return 'System.out.println(' + argument0 + ');\n';// + '.toString());\n';
 };
 
 Blockly.Java['text_prompt_ext'] = function(block) {

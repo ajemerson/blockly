@@ -53,7 +53,6 @@ Blockly.Java['controls_repeat_ext'] = function(block) {
   code += 'for (int ' + loopVar + ' = 0; '+
                         loopVar +' < ' + repeats + '; '+
                         loopVar + '++) {\n' +
-          // Blockly.Java.INDENT +
           branch +
           '} \n';
   return code;

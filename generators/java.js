@@ -115,7 +115,7 @@ Blockly.Java.blocklyTypes_ = {};
 /**
  * Default Name of the application for use by all generated classes
  */
-Blockly.Java.AppName_ = 'myClass';
+Blockly.Java.AppName_ = 'main';
 /**
  * Default Name of the application for use by all generated classes
  */
@@ -190,7 +190,7 @@ Blockly.Java.fileHeader =
  */
 Blockly.Java.setAppName = function(name) {
   if (!name || name === '') {
-    name = 'MyClass';
+    name = 'Main';
   }
   this.AppName_ = name;
 };
@@ -405,9 +405,9 @@ Blockly.Java.workspaceToCode = function(workspace, parms) {
       extra = ', ';
     }
   }
-  finalcode += ' {\n\n' + this.INDENT + 
+  finalcode += ' {\n\n' +
               'public static void main(String[] args) { \n\n' + 
-               this.INDENT + this.INDENT + code + '\n } \n' +
+               code + '\n}\n' +
                '}\n\n' +
                this.getClasses()
                ;
