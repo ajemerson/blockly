@@ -406,8 +406,7 @@ Blockly.Java.workspaceToCode = function(workspace, parms) {
     }
   }
   finalcode += ' {\n\n' +
-              'public static void main(String[] args) { \n\n' + 
-               code + '\n}\n' +
+               code +
                '}\n\n' +
                this.getClasses()
                ;
