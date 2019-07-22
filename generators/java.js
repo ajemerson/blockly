@@ -1198,8 +1198,6 @@ Blockly.Java.init = function(workspace, imports) {
   //var variables = Blockly.Variables.allVariables(workspace);
   // this.blocklyTypes_ = Blockly.Variables.allVariablesTypes(workspace);
   this.blocklyTypes_ = workspace.getVariableTypes();
-  console.log(this.blocklyTypes_);
-  console.log(variables);
 
   // Make sure all the type variables are pushed.  This is because we
   // Don't return the special function parameters in the allVariables list
@@ -1210,7 +1208,6 @@ Blockly.Java.init = function(workspace, imports) {
     var key = variables[x];
     this.variableTypes_[key] = this.mapType(this.blocklyTypes_[key]);
   }
-  console.log(this.variableTypes_);
 };
 
 /**
