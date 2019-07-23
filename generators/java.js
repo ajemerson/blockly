@@ -389,10 +389,11 @@ Blockly.Java.workspaceToCode = function(workspace, parms) {
   // Generate the code first to get all of the required imports calculated.
   this.forceUpdate(workspace);
   var code = this.workspaceToCode_(workspace,parms);
-  var finalcode = //this.fileHeader +
+  var finalcode = "";
+                  //this.fileHeader +
                   //'package ' + this.getPackage() + ';\n\n' +
-                  this.getImports() + '\n\n' +
-                  'public class ' + this.getAppName();
+                  // this.getImports() + '\n\n' +
+                  // 'public class ' + this.getAppName();
   var baseClass = this.getBaseclass();
   if (baseClass != '') {
     finalcode += ' extends ' + baseClass;
@@ -405,10 +406,10 @@ Blockly.Java.workspaceToCode = function(workspace, parms) {
       extra = ', ';
     }
   }
-  finalcode += ' {\n\n' +
-               code +
-               '}\n\n' +
-               this.getClasses()
+  finalcode += //' {\n\n' +
+               code //+
+               //'}\n\n' +
+              //  this.getClasses()
                ;
   return finalcode;
 }
@@ -1079,7 +1080,7 @@ Blockly.Java.mapType = function(type) {
     // If they gave us nothing or somehow called us in error then we want to
     // pretend that the type is a Var
     if (!typeArray || typeArray.length === 0) {
-      console.log('Empty type. Using Var');
+      //console.log('Empty type. Using Var');
       typeArray = ['Var'];
     }
     var key = typeArray.shift();
